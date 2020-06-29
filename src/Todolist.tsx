@@ -1,84 +1,76 @@
-import React from "react";
+import React, {KeyboardEvent, ChangeEvent, useState} from "react";
 
-export type TaskType={
-    id:number,
-    title:string,
-    isDone:boolean
-
+export type TaskType = {
+    id: string,
+    title: string,
+    isDone: boolean,
 }
 
-type PropsType={
-    title:string,
-    task:Array<TaskType>
+type PropsType = {
+    title: string,
+    tasks: TaskType[],
+    resultTasks: (id: string) => void;
+    changeFilter: (value: string) => void;
+    addTask: (title: string) => void
 }
 
-export function Todolist(props:PropsType) {
+
+export function Todolist(props: PropsType) {
+    let [title, setTitle] = useState();
+
+    const OnNewTitleChangeHander = (event: ChangeEvent<HTMLInputElement>) => {
+        setTitle(event.currentTarget.value)
+    }
+    const onKeyPressHander = (event: KeyboardEvent<HTMLInputElement>) => {
+        if (event.charCode === 13) {
+            setTitle(props.addTask(title));
+            setTitle('')
+        }
+    }
+    const addTasks = () => {
+        props.addTask(title);
+        setTitle('')
+    }
+    const onAllClickHeander = () => {
+        props.changeFilter('all')
+    }
+    const onActiveClickHeander = () => {
+        props.changeFilter('active')
+    }
+    const onCompletedClickHeander = () => {
+        props.changeFilter('completed')
+    }
+
     return (
         <div>
             <div><h3>{props.title}</h3></div>
             <div>
-                <input/>
-                <button>+</button>
+                <input value={title} onChange={OnNewTitleChangeHander} onKeyPress={onKeyPressHander}/>
+                <button onClick={addTasks}>+
+                </button>
             </div>
             <ul>
-                <li><input type="checkbox" checked={props.task[2].isDone}/><span>HTML&CSS</span></li>
-                <li><input type="checkbox" checked={true}/><span>JS</span></li>
-                <li><input type="checkbox" checked={false}/><span>REACT</span></li>
+                {
+                    props.tasks.map((element) =>{
+                        const onRemoveHandler=()=>{props.resultTasks(element.id)}
+
+
+                        return <li key={element.id}>
+                            {/*<button onClick={()=>console.log(element.id)}>X</button>*/}
+                            <button onClick={onRemoveHandler}>X</button>
+                            <input type="checkbox"
+                                   checked={element.isDone}/>
+                            <span>{element.title}</span>
+                        </li>
+                    }
+                   )
+                }
             </ul>
             <div>
-                <button>All</button>
-                <button>Active</button>
-                <button>Commpleted</button>
+                <button onClick={onAllClickHeander}>All</button>
+                <button onClick={onActiveClickHeander}>Active</button>
+                <button onClick={onCompletedClickHeander}>Completed</button>
             </div>
         </div>
     )
 }
-
-export default Todolist;
-
-
-
-
-
-
-
-
-
-//++__+_+_+-+-=-\-=\==-=\-=-=-\=-\=-\-\=-\=-\-==-===++++++++++++++++++++________________--------++++++++++++++===================
-//
-// import React from "react";
-//
-// export type TaskType = {
-//     id: number,
-//     title: string,
-//     isDone: boolean
-// }
-//
-// type PropsType = {
-//     title: string,
-//     task: Array<TaskType>
-// }
-//
-// export function Todolist(props:PropsType ) {
-//     return (
-//         <div>
-//             <div><h3>{props.title}</h3></div>
-//             {/*<div><h3>{props.task[0].isDone}</h3></div>*/}
-//             <div>
-//                 <input/>
-//                 <button>+</button>
-//             </div>
-//             <ul>
-//                 <li><input type="checkbox" checked={props.task[1].isDone}/><span>HTML&CSS</span></li>
-//                 <li><input type="checkbox" checked={true}/><span>JS</span></li>
-//                 <li><input type="checkbox" checked={false}/><span>REACT</span></li>
-//             </ul>
-//             <div>
-//                 <button>All</button>
-//                 <button>Active</button>
-//                 <button>Commpleted</button>
-//             </div>
-//         </div>
-//     )
-// }
-//

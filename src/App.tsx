@@ -1,55 +1,53 @@
-import React from 'react';
+import React, {useState} from 'react';
 import './App.css';
 import {TaskType, Todolist} from "./Todolist";
+import {v1} from "uuid";
 
 function App() {
 
-    let task1: Array<TaskType> = [
-        {id: 1, title: 'JS', isDone: false},
-        {id: 2, title: 'HTML', isDone: true},
-        {id: 3, title: 'TS', isDone: true}
-    ]
+    let [tasks, setTasks] = useState([
+        {id: v1(), title: 'CSS', isDone: true},
+        {id: v1(), title: 'JS', isDone: true},
+        {id: v1(), title: 'React', isDone: false},
+        {id: v1(), title: 'Redux', isDone: false}
+    ])
 
-    let task2: Array<TaskType> = [
-        {id: 1, title: 'JS', isDone: true},
-        {id: 2, title: 'HTML', isDone: true},
-        {id: 3, title: 'TS', isDone: true}
-    ]
+    function resultTasks(id: string) {
+        tasks = tasks.filter(f => f.id !== id);
+        setTasks(tasks);
+    }
+
+    let tasksForTodolist = tasks;
+    let [filter, setFilter] = useState('all');
+
+    function addTask(title: string) {
+        let newTask = {id: v1(), title: title, isDone: true};
+        setTasks([newTask,...tasks]);
+    }
+
+    if (filter === 'active') {
+        tasksForTodolist = tasks.filter(f => f.isDone === true)
+    }
+    if (filter === 'completed') {
+        tasksForTodolist = tasks.filter(f => f.isDone === false)
+    }
+
+    function changeFilter(value: string) {
+        setFilter(value);
+    }
+
     return (
         <div className="App">
-            <Todolist title={'Whot to lern'} task={task1}/>
-            <Todolist title={'lern TS'} task={task2}/>
+            <Todolist
+                title={'What to learn'}
+                tasks={tasksForTodolist}
+                resultTasks={resultTasks}
+                changeFilter={changeFilter}
+                addTask={addTask}
+            />
         </div>
     );
 }
 
 export default App;
 
-
-//=-=-+_+_+_=-=\-=-+_+++++++++++++++++----------------_______________________================================_________-==-=-=-----=\---
-// import React from 'react';
-// import './App.css';
-// import {TaskType, Todolist} from "./Todolist";
-//
-// function App() {
-//     let tasks1:Array<TaskType>=[
-//         {id:1,title:'CSS',isDone:true},
-//         {id:2,title:'JS',isDone:true},
-//         {id:3,title:'REACT',isDone:false},
-//     ]
-//
-//     let tasks2:Array<TaskType>=[
-//         {id:1,title:'CSS2',isDone:true},
-//         {id:2,title:'JS2',isDone:false},
-//         {id:3,title:'REACT2',isDone:true},
-//     ]
-//
-//     return (
-//         <div className="App">
-//             <Todolist title={'What to learn'} task={tasks1}/>
-//             <Todolist title={'Movies'} task={tasks2}/>
-//         </div>
-//     );
-// }
-//
-// export default App;
